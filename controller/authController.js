@@ -1,27 +1,27 @@
 require("dotenv").config();
+dotenv.config();
 const bcrypt = require("bcrypt");
 const bcrypt_salt = 10;
 const jwt = require("jsonwebtoken");
+import mysql from "mysql";
 
 const createToken = (id) => {
-    return jwt.sign({ id }, process.env.TOKEN_SECRET, {
-      expiresIn: maxAge,
-    });
-  };
+  return jwt.sign({ id }, process.env.TOKEN_SECRET, {
+    expiresIn: maxAge,
+  });
+};
 
+// Utilisez la configuration de la base de données depuis le fichier config.js
+import config from "./config/config.js";
+
+// Initialisez la connexion à la base de données MySQL en utilisant la configuration
+const connexion = mysql.createConnection(config);
+
+connexion.connect((err) => {
+  if (err) throw err;
+  console.log("Connecté à la base de données MySQL");
+});
   
-  // Initialisez la connexion à la base de données MySQL
-  const connexion = mysql.createConnection({
-    host: 'localhost',
-    user: 'votre_utilisateur',
-    password: 'votre_mot_de_passe',
-    database: 'votre_base_de_données'
-  });
-  
-  connexion.connect((err) => {
-    if (err) throw err;
-    console.log('Connecté à la base de données MySQL');
-  });
   
   // Inscription
   module.exports.signIn = async (req, res) => {

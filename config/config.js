@@ -1,6 +1,8 @@
 require("dotenv").config();
 
-const config = {
+
+// Dans config.js
+export default {
   host: process.env.DB_HOST,
   port: process.env.DB_PORT,
   user: process.env.DB_USER,
@@ -8,4 +10,3 @@ const config = {
   database: process.env.DB_NAME,
 };
 
-module.exports = config;
