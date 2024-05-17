@@ -30,7 +30,7 @@ module.exports.checkUser = (req, res, next) => {
         if (err) {
           console.log(err);
         } else {
-          // console.log("Id dans la console: " + decodedToken.id);
+          console.log("Id dans la console: " + decodedToken.id);
           next();
         }
       });

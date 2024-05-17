@@ -2,13 +2,14 @@ const express = require("express");
 const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
 const userRoutes = require("./routes/userRoutes");
+const methodOverride = require("method-override");
 
 require("dotenv").config({ path: "./config/.env" });
 
 const { checkUser, requireAuth } = require("./middleware/authMiddleware");
 
 const app = express();
-
+app.use(methodOverride("_method"));
 // lire en JSON
 app.use(bodyParser.json());
 // lire URL

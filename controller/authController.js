@@ -4,6 +4,9 @@ const bcrypt = require("bcrypt");
 const bcrypt_salt = 10;
 const jwt = require("jsonwebtoken");
 
+import { connectDB } from "../config/config.js";
+import axios from "axios";
+
 const maxAge = 3 * 24 * 60 * 60 * 1000;
 
 const createToken = (id) => {
@@ -12,19 +15,7 @@ const createToken = (id) => {
   });
 };
 
-import { connectDB } from "../config/config.js";
-// Utilisez la configuration de la base de données depuis le fichier config.js
-import config from "./config/config.js";
-
-// Initialisez la connexion à la base de données MySQL en utilisant la configuration
-const connexion = mysql.createConnection(config);
-
-connexion.connect((err) => {
-  if (err) throw err;
-  console.log("Connecté à la base de données MySQL");
-});
-
-// Inscription
+// register
 module.exports.signIn = async (req, res) => {
   const { nameUser, email, password, confPassword } = req.body;
   const checkEmail = await connectDB.query(`SELECT email FROM users`);
@@ -51,9 +42,9 @@ module.exports.signIn = async (req, res) => {
   }
 };
 
-// connexion
+// login
 
-// deconnexion
+// logout
 module.exports.logout = async (req, res) => {
   res.cookie("jwt", "", { maxAge: 1 });
   res.redirect("/");
