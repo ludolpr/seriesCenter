@@ -1,11 +1,9 @@
-require("dotenv").config();
-dotenv.config();
 const bcrypt = require("bcrypt");
 const bcrypt_salt = 10;
 const jwt = require("jsonwebtoken");
 
-import { connectDB } from "../config/config.js";
-import axios from "axios";
+const connectDB = require("../config/config.js");
+const router = require("express").Router();
 
 const maxAge = 3 * 24 * 60 * 60 * 1000;
 
@@ -16,10 +14,10 @@ const createToken = (id) => {
 };
 
 // register
-module.exports.signIn = async (req, res) => {
+module.exports.signUp = async (req, res) => {
   const { nameUser, email, password, confPassword } = req.body;
-  const checkEmail = await connectDB.query(`SELECT email FROM users`);
-  const checkName = await connectDB.query(`SELECT name FROM users`);
+  // const checkEmail = await connectDB.query(`SELECT email FROM users`);
+  const checkName = await connectDB.query(`SELECT nameUser FROM users`);
   if (password !== confPassword) return res.redirect("/");
   if (nameUser === "" || email === "") {
     res.redirect("/");
@@ -27,7 +25,7 @@ module.exports.signIn = async (req, res) => {
     res.redirect("/");
   } else if (password === confPassword) {
     const newUser = await connectDB.query(
-      `INSERT INTO users SET name="${nameUser}", email="${email}", password="${await bcrypt.hash(
+      `INSERT INTO users name="${nameUser}", email="${email}", password="${await bcrypt.hash(
         password,
         bcrypt_salt
       )}`
