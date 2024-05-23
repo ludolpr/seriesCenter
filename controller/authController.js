@@ -1,9 +1,7 @@
+const userModel = require("../models/userModel");
 const bcrypt = require("bcrypt");
 const bcrypt_salt = 10;
 const jwt = require("jsonwebtoken");
-
-const connectDB = require("../config/config.js");
-const router = require("express").Router();
 
 const maxAge = 3 * 24 * 60 * 60 * 1000;
 
@@ -15,32 +13,42 @@ const createToken = (id) => {
 
 // register
 module.exports.signUp = async (req, res) => {
-  const { nameUser, email, password, confPassword } = req.body;
-  // const checkEmail = await connectDB.query(`SELECT email FROM users`);
-  const checkName = await connectDB.query(`SELECT nameUser FROM users`);
-  if (password !== confPassword) return res.redirect("/");
-  if (nameUser === "" || email === "") {
-    res.redirect("/");
-  } else if (email === checkEmail || nameUser === checkName) {
-    res.redirect("/");
-  } else if (password === confPassword) {
-    const newUser = await connectDB.query(
-      `INSERT INTO users name="${nameUser}", email="${email}", password="${await bcrypt.hash(
-        password,
-        bcrypt_salt
-      )}`
-    );
-    const [users] = await connectDB.query(
-      `SELECT * FROM users WHERE id = ${newUser.insertId}`
-    );
-    const token = createToken(user.idUser);
-    console.log("token", token, email, password);
-    res.cookie("jwt", token, { httpOnly: true, maxAge });
-    res.status(200).json({ user: users.idUser });
+  console.log("test postman:", req.body);
+  const { nameUser, email, password } = req.body;
+
+  try {
+    const hashedPassword = await bcrypt.hash(password, bcrypt_salt);
+    const user = await userModel.create({
+      nameUser,
+      email,
+      password: hashedPassword,
+    });
+    res.status(201).json({ user: user.idUser });
+  } catch (err) {
+    // const errors = signUpErrors(err);
+    // res.status(200).send({ errors });
+    res.status(200).send(err);
   }
 };
 
 // login
+module.exports.signIn = async (req, res) => {
+  console.log("register", req.body);
+  const { email, password } = req.body;
+
+  try {
+    const user = await userModel.login(email, password);
+    const token = createToken(user.idUser);
+    console.log("token", token, email, password);
+
+    res.cookie("jwt", token, { httpOnly: true, maxAge });
+    res.status(200).json({ user: user.idUser });
+  } catch (err) {
+    console.log("Error occurred:", err);
+
+    res.status(400).json({ error: err.message });
+  }
+};
 
 // logout
 module.exports.logout = async (req, res) => {

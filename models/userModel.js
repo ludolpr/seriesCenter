@@ -1,14 +1,14 @@
-import { DataTypes } from "sequelize";
-import db from "../config/db";
+const { DataTypes } = require("sequelize");
+const db = require("../config/db");
+const bcrypt = require("bcrypt");
 
-const userSchema = db.define(
-  users,
+const userModel = db.define(
+  "users",
   {
     idUser: {
       type: DataTypes.INTEGER,
       autoIncrement: true,
       primaryKey: true,
-      allowNull: false,
     },
     nameUser: {
       type: DataTypes.STRING,
@@ -29,8 +29,21 @@ const userSchema = db.define(
   },
   {
     tableName: "users",
-    timestamps: true,
+    timestamps: false,
   }
 );
 
-module.exports = userSchema;
+// Méthode pour vérifier les informations de connexion
+userModel.login = async function (email, password) {
+  const user = await userModel.findOne({ where: { email } });
+  if (!user) {
+    throw new Error("Incorrect email");
+  }
+  const match = await bcrypt.compare(password, user.password);
+  if (!match) {
+    throw new Error("Incorrect password");
+  }
+  return user;
+};
+
+module.exports = userModel;

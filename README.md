@@ -12,5 +12,8 @@ visuel à présenter. Néanmoins, devront être présent sur votre mini site les
 
 <!-- depuis le dossier client -->
 
-npx tailwindcss -i ./src/index.css -o ./src/styles/style.css --watch
+    npx tailwindcss -i ./src/index.css -o ./src/styles/style.css --watch
 npm start pour react
+
+
+probleme acces a .env
